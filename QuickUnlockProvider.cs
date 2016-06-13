@@ -106,9 +106,6 @@ namespace KeePassQuickUnlock
 					return null;
 				}
 
-				//remove the cache entry
-				unlockCache.Remove(ctx.DatabasePath);
-
 				var password = cachePassword.Password.ReadString();
 				Func<bool> cmp;
 				if (mode == QuickUnlockWhere.Front)
@@ -122,6 +119,9 @@ namespace KeePassQuickUnlock
 
 				if (!cmp())
 				{
+					//remove the cache entry
+					unlockCache.Remove(ctx.DatabasePath);
+
 					//return dummy password to let KeePass fail while loading the database
 					return new byte[] { 0 };
 				}
