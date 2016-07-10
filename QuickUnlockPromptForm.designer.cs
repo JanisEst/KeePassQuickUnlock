@@ -71,9 +71,9 @@
 			this.infoLabel.AutoSize = true;
 			this.infoLabel.Location = new System.Drawing.Point(12, 77);
 			this.infoLabel.Name = "infoLabel";
-			this.infoLabel.Size = new System.Drawing.Size(19, 13);
+			this.infoLabel.Size = new System.Drawing.Size(213, 13);
 			this.infoLabel.TabIndex = 3;
-			this.infoLabel.Text = "<>";
+			this.infoLabel.Text = "Enter the password to unlock the database:";
 			// 
 			// passwordTextBox
 			// 

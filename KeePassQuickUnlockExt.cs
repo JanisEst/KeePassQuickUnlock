@@ -1,12 +1,16 @@
 ﻿using KeePass.Forms;
 using KeePass.Plugins;
 using KeePass.UI;
-using KeePassLib.Keys;
+using KeePassLib;
+using KeePassLib.Collections;
+using KeePassLib.Serialization;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
+using STimers = System.Timers;
 
 namespace KeePassQuickUnlock
 {
@@ -14,6 +18,8 @@ namespace KeePassQuickUnlock
 	{
 		private static IPluginHost host = null;
 		private static QuickUnlockProvider provider = null;
+
+		private STimers.Timer timer;
 
 		public const string ShortProductName = "QuickUnlock";
 
@@ -45,9 +51,13 @@ namespace KeePassQuickUnlock
 
 			host.KeyProviderPool.Add(provider);
 
-			host.MainWindow.FileClosingPre += OnFileClosingPre;
+			host.MainWindow.FileClosingPre += FileClosingPreHandler;
 
 			GlobalWindowManager.WindowAdded += WindowAddedHandler;
+
+			timer = new STimers.Timer(1000);
+			timer.Elapsed += ElapsedHandler;
+			timer.Start();
 
 			return true;
 		}
@@ -56,13 +66,22 @@ namespace KeePassQuickUnlock
 		{
 			if (host == null) { return; }
 
+			timer.Stop();
+			timer.Elapsed -= ElapsedHandler;
+			timer = null;
+
 			GlobalWindowManager.WindowAdded -= WindowAddedHandler;
 
-			host.MainWindow.FileClosingPre -= OnFileClosingPre;
+			host.MainWindow.FileClosingPre -= FileClosingPreHandler;
 
 			host.KeyProviderPool.Remove(provider);
 
 			host = null;
+		}
+
+		private void ElapsedHandler(object sender, STimers.ElapsedEventArgs e)
+		{
+			provider.ClearExpieredEntries();
 		}
 
 		/// <summary>
@@ -70,27 +89,30 @@ namespace KeePassQuickUnlock
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void OnFileClosingPre(object sender, FileClosingEventArgs e)
+		private void FileClosingPreHandler(object sender, FileClosingEventArgs e)
 		{
 			if (e == null) { Debug.Assert(false); return; }
 			if (e.Cancel) { return; }
 
-			if (Host.CustomConfig.GetBool(QuickUnlockProvider.CfgActive, false) == false)
-			{
-				return;
-			}
-
 			if (e.Database != null && e.Database.MasterKey != null)
 			{
-				var masterKey = e.Database.MasterKey;
-				if (masterKey.UserKeyCount == 1) //we only support one key
+				var rootGroup = e.Database.RootGroup;
+				if (rootGroup != null)
 				{
-					var password = masterKey.GetUserKey(typeof(KcpPassword));
-					if (password != null) //which must be a KcpPassword
+					var entry = rootGroup.Entries.Where(en => en.Strings.GetSafe(PwDefs.TitleField).ReadString() == ShortProductName).FirstOrDefault();
+					if (entry != null)
 					{
-						provider.AddCachedKey(e.Database.IOConnectionInfo.Path, password as KcpPassword);
+						var password = entry.Strings.GetSafe(PwDefs.PasswordField);
+						if (password.IsEmpty == false)
+						{
+							provider.AddCachedKey(e.Database.IOConnectionInfo.Path, password, e.Database.MasterKey);
+							return;
+						}
 					}
 				}
+
+				// If no pin is set, remove possible cached pin.
+				provider.RemoveCachedKey(e.Database.IOConnectionInfo.Path);
 			}
 		}
 
@@ -101,7 +123,6 @@ namespace KeePassQuickUnlock
 		/// <param name="e"></param>
 		private void WindowAddedHandler(object sender, GwmWindowEventArgs e)
 		{
-			//remove QuickUnlock auto select if there is no entry present
 			var keyPromptForm = e.Form as KeyPromptForm;
 			if (keyPromptForm != null)
 			{
@@ -110,15 +131,33 @@ namespace KeePassQuickUnlock
 					var m_cmbKeyFile = keyPromptForm.Controls.Find("m_cmbKeyFile", false).FirstOrDefault() as ComboBox;
 					if (m_cmbKeyFile != null)
 					{
-						if (m_cmbKeyFile.Text == ShortProductName)
+						var isQuickUnlockAvailable = false;
+
+						var fieldInfo = keyPromptForm.GetType().GetField("m_ioInfo", BindingFlags.Instance | BindingFlags.NonPublic);
+						if (fieldInfo != null)
 						{
-							if (!provider.HasCachedKeys)
+							var ioInfo = fieldInfo.GetValue(keyPromptForm) as IOConnectionInfo;
+							if (ioInfo != null)
 							{
-								var m_cbKeyFile = keyPromptForm.Controls.Find("m_cbKeyFile", false).FirstOrDefault() as CheckBox;
-								if (m_cbKeyFile != null)
+								if (provider.IsCachedKey(ioInfo.Path))
 								{
-									UIUtil.SetChecked(m_cbKeyFile, false);
+									var index = m_cmbKeyFile.Items.IndexOf(ShortProductName);
+									if (index != -1)
+									{
+										m_cmbKeyFile.SelectedIndex = index;
+
+										isQuickUnlockAvailable = true;
+									}
 								}
+							}
+						}
+
+						if (!isQuickUnlockAvailable && m_cmbKeyFile.Text == ShortProductName)
+						{
+							var m_cbKeyFile = keyPromptForm.Controls.Find("m_cbKeyFile", false).FirstOrDefault() as CheckBox;
+							if (m_cbKeyFile != null)
+							{
+								UIUtil.SetChecked(m_cbKeyFile, false);
 							}
 						}
 					}
@@ -129,7 +168,7 @@ namespace KeePassQuickUnlock
 			var optionsForm = e.Form as OptionsForm;
 			if (optionsForm != null)
 			{
-				optionsForm.Shown += delegate(object sender2, EventArgs e2)
+				optionsForm.Shown += delegate (object sender2, EventArgs e2)
 				{
 					try
 					{

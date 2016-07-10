@@ -15,7 +15,7 @@ namespace KeePassQuickUnlock
 			get { return passwordTextBox.Text; }
 		}
 
-		public QuickUnlockPromptForm(QuickUnlockWhere mode, ulong neededChars)
+		public QuickUnlockPromptForm()
 		{
 			InitializeComponent();
 
@@ -29,7 +29,6 @@ namespace KeePassQuickUnlock
 			Text = strTitle;
 			BannerFactory.CreateBannerEx(this, bannerImagePictureBox, Properties.Resources.B48x48_TimeLock, strTitle, strDesc);
 
-			infoLabel.Text = string.Format("Enter {0} {1} characters of your password:", mode == QuickUnlockWhere.Front ? "first" : "last", neededChars);
 			hidePasswordCheckBox.Checked = true;
 
 			passwordTextBox.Text = string.Empty;

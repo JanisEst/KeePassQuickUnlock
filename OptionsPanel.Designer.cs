@@ -28,100 +28,60 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.numCharsLabel = new System.Windows.Forms.Label();
-			this.numCharsNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.whereLabel = new System.Windows.Forms.Label();
-			this.whereComboBox = new System.Windows.Forms.ComboBox();
 			this.infoLabel = new System.Windows.Forms.Label();
-			this.activeCheckBox = new System.Windows.Forms.CheckBox();
-			((System.ComponentModel.ISupportInitialize)(this.numCharsNumericUpDown)).BeginInit();
+			this.validPeriodComboBox = new System.Windows.Forms.ComboBox();
+			this.info2Label = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-			// 
-			// numCharsLabel
-			// 
-			this.numCharsLabel.AutoSize = true;
-			this.numCharsLabel.Location = new System.Drawing.Point(3, 72);
-			this.numCharsLabel.Name = "numCharsLabel";
-			this.numCharsLabel.Size = new System.Drawing.Size(137, 13);
-			this.numCharsLabel.TabIndex = 0;
-			this.numCharsLabel.Text = "Length of QuickUnlock key";
-			// 
-			// numCharsNumericUpDown
-			// 
-			this.numCharsNumericUpDown.Location = new System.Drawing.Point(150, 70);
-			this.numCharsNumericUpDown.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-			this.numCharsNumericUpDown.Minimum = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-			this.numCharsNumericUpDown.Name = "numCharsNumericUpDown";
-			this.numCharsNumericUpDown.Size = new System.Drawing.Size(121, 20);
-			this.numCharsNumericUpDown.TabIndex = 1;
-			this.numCharsNumericUpDown.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
-			// 
-			// whereLabel
-			// 
-			this.whereLabel.AutoSize = true;
-			this.whereLabel.Location = new System.Drawing.Point(3, 99);
-			this.whereLabel.Name = "whereLabel";
-			this.whereLabel.Size = new System.Drawing.Size(141, 13);
-			this.whereLabel.TabIndex = 2;
-			this.whereLabel.Text = "Position of QuickUnlock key";
-			// 
-			// whereComboBox
-			// 
-			this.whereComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.whereComboBox.FormattingEnabled = true;
-			this.whereComboBox.Items.AddRange(new object[] {
-            "Front",
-            "Back"});
-			this.whereComboBox.Location = new System.Drawing.Point(150, 96);
-			this.whereComboBox.Name = "whereComboBox";
-			this.whereComboBox.Size = new System.Drawing.Size(121, 21);
-			this.whereComboBox.TabIndex = 3;
 			// 
 			// infoLabel
 			// 
 			this.infoLabel.AutoSize = true;
 			this.infoLabel.Location = new System.Drawing.Point(3, 9);
 			this.infoLabel.Name = "infoLabel";
-			this.infoLabel.Size = new System.Drawing.Size(311, 26);
+			this.infoLabel.Size = new System.Drawing.Size(364, 13);
 			this.infoLabel.TabIndex = 4;
-			this.infoLabel.Text = "Unlock your database once with your full password, re-open it by\r\ntyping just a f" +
-    "ew characters.";
+			this.infoLabel.Text = "Select the time range after which a QuickUnlock password gets invalidated:";
 			// 
-			// activeCheckBox
+			// validPeriodComboBox
 			// 
-			this.activeCheckBox.AutoSize = true;
-			this.activeCheckBox.Location = new System.Drawing.Point(6, 45);
-			this.activeCheckBox.Name = "activeCheckBox";
-			this.activeCheckBox.Size = new System.Drawing.Size(130, 17);
-			this.activeCheckBox.TabIndex = 5;
-			this.activeCheckBox.Text = "Activate QuickUnlock";
-			this.activeCheckBox.UseVisualStyleBackColor = true;
+			this.validPeriodComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.validPeriodComboBox.FormattingEnabled = true;
+			this.validPeriodComboBox.Items.AddRange(new object[] {
+            "Unlimited",
+            "1 Minute",
+            "5 Minutes",
+            "10 Minutes",
+            "15 Minutes",
+            "30 Minutes",
+            "1 Hour",
+            "2 Hours",
+            "6 Hours",
+            "12 Hours",
+            "1 Day"});
+			this.validPeriodComboBox.Location = new System.Drawing.Point(6, 25);
+			this.validPeriodComboBox.Name = "validPeriodComboBox";
+			this.validPeriodComboBox.Size = new System.Drawing.Size(186, 21);
+			this.validPeriodComboBox.TabIndex = 5;
+			// 
+			// info2Label
+			// 
+			this.info2Label.AutoSize = true;
+			this.info2Label.Location = new System.Drawing.Point(3, 49);
+			this.info2Label.Name = "info2Label";
+			this.info2Label.Size = new System.Drawing.Size(454, 13);
+			this.info2Label.TabIndex = 6;
+			this.info2Label.Text = "If the password timed out you need to provide the full credentials to unlock the " +
+    "database again.";
 			// 
 			// OptionsPanel
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.activeCheckBox);
+			this.Controls.Add(this.info2Label);
+			this.Controls.Add(this.validPeriodComboBox);
 			this.Controls.Add(this.infoLabel);
-			this.Controls.Add(this.whereComboBox);
-			this.Controls.Add(this.whereLabel);
-			this.Controls.Add(this.numCharsNumericUpDown);
-			this.Controls.Add(this.numCharsLabel);
 			this.Name = "OptionsPanel";
-			this.Size = new System.Drawing.Size(320, 131);
-			((System.ComponentModel.ISupportInitialize)(this.numCharsNumericUpDown)).EndInit();
+			this.Size = new System.Drawing.Size(565, 285);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -129,11 +89,8 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label numCharsLabel;
-		private System.Windows.Forms.NumericUpDown numCharsNumericUpDown;
-		private System.Windows.Forms.Label whereLabel;
-		private System.Windows.Forms.ComboBox whereComboBox;
 		private System.Windows.Forms.Label infoLabel;
-		private System.Windows.Forms.CheckBox activeCheckBox;
+		private System.Windows.Forms.ComboBox validPeriodComboBox;
+		private System.Windows.Forms.Label info2Label;
 	}
 }
