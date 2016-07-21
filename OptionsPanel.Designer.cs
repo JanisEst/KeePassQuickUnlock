@@ -34,6 +34,7 @@
 			this.modeEntryPartOfRadioButton = new System.Windows.Forms.RadioButton();
 			this.modeEntryRadioButton = new System.Windows.Forms.RadioButton();
 			this.settingsGroupBox = new System.Windows.Forms.GroupBox();
+			this.autoPromptCheckBox = new System.Windows.Forms.CheckBox();
 			this.partOfGroupBox = new System.Windows.Forms.GroupBox();
 			this.originLabel = new System.Windows.Forms.Label();
 			this.lengthLabel = new System.Windows.Forms.Label();
@@ -42,7 +43,6 @@
 			this.originFrontRadioButton = new System.Windows.Forms.RadioButton();
 			this.partOfInfoLabel = new System.Windows.Forms.Label();
 			this.helpButton = new System.Windows.Forms.Button();
-			this.autoPromptCheckBox = new System.Windows.Forms.CheckBox();
 			this.modeGroupBox.SuspendLayout();
 			this.settingsGroupBox.SuspendLayout();
 			this.partOfGroupBox.SuspendLayout();
@@ -54,9 +54,9 @@
 			this.infoLabel.AutoSize = true;
 			this.infoLabel.Location = new System.Drawing.Point(6, 39);
 			this.infoLabel.Name = "infoLabel";
-			this.infoLabel.Size = new System.Drawing.Size(364, 13);
+			this.infoLabel.Size = new System.Drawing.Size(336, 13);
 			this.infoLabel.TabIndex = 4;
-			this.infoLabel.Text = "Select the time range after which a QuickUnlock password gets invalidated:";
+			this.infoLabel.Text = "Select the time range after which a QuickUnlock key gets invalidated:";
 			// 
 			// validPeriodComboBox
 			// 
@@ -124,6 +124,18 @@
 			this.settingsGroupBox.TabIndex = 8;
 			this.settingsGroupBox.TabStop = false;
 			this.settingsGroupBox.Text = "QuickUnlock Settings";
+			// 
+			// autoPromptCheckBox
+			// 
+			this.autoPromptCheckBox.AutoSize = true;
+			this.autoPromptCheckBox.Checked = true;
+			this.autoPromptCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.autoPromptCheckBox.Location = new System.Drawing.Point(9, 19);
+			this.autoPromptCheckBox.Name = "autoPromptCheckBox";
+			this.autoPromptCheckBox.Size = new System.Drawing.Size(275, 17);
+			this.autoPromptCheckBox.TabIndex = 8;
+			this.autoPromptCheckBox.Text = "Auto prompt for the QuickUnlock key if it is available.";
+			this.autoPromptCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// partOfGroupBox
 			// 
@@ -220,18 +232,6 @@
 			this.helpButton.TabIndex = 3;
 			this.helpButton.UseVisualStyleBackColor = true;
 			this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
-			// 
-			// autoPromptCheckBox
-			// 
-			this.autoPromptCheckBox.AutoSize = true;
-			this.autoPromptCheckBox.Checked = true;
-			this.autoPromptCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.autoPromptCheckBox.Location = new System.Drawing.Point(9, 19);
-			this.autoPromptCheckBox.Name = "autoPromptCheckBox";
-			this.autoPromptCheckBox.Size = new System.Drawing.Size(303, 17);
-			this.autoPromptCheckBox.TabIndex = 8;
-			this.autoPromptCheckBox.Text = "Auto prompt for the QuickUnlock password if it is available.";
-			this.autoPromptCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// OptionsPanel
 			// 

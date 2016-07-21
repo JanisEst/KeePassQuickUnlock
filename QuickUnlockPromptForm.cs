@@ -10,9 +10,9 @@ namespace KeePassQuickUnlock
 	{
 		private bool m_bInitializing = true;
 
-		public string QuickPassword
+		public string QuickUnlockKey
 		{
-			get { return passwordTextBox.Text; }
+			get { return keyTextBox.Text; }
 		}
 
 		public QuickUnlockPromptForm()
@@ -29,18 +29,18 @@ namespace KeePassQuickUnlock
 			Text = strTitle;
 			BannerFactory.CreateBannerEx(this, bannerImagePictureBox, Properties.Resources.B48x48_TimeLock, strTitle, strDesc);
 
-			hidePasswordCheckBox.Checked = true;
+			hideKeyCheckBox.Checked = true;
 
-			passwordTextBox.Text = string.Empty;
+			keyTextBox.Text = string.Empty;
 
-			OnCheckedHidePassword(null, null);
+			OnCheckedHideKey(null, null);
 
 			m_bInitializing = false;
 		}
 
 		private void OnFormShown(object sender, EventArgs e)
 		{
-			UIUtil.SetFocus(passwordTextBox, this);
+			UIUtil.SetFocus(keyTextBox, this);
 		}
 
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -48,20 +48,20 @@ namespace KeePassQuickUnlock
 			GlobalWindowManager.RemoveWindow(this);
 		}
 
-		private void OnCheckedHidePassword(object sender, EventArgs e)
+		private void OnCheckedHideKey(object sender, EventArgs e)
 		{
-			bool hide = hidePasswordCheckBox.Checked;
+			bool hide = hideKeyCheckBox.Checked;
 			if (!hide && !AppPolicy.Try(AppPolicyId.UnhidePasswords))
 			{
-				hidePasswordCheckBox.Checked = true;
+				hideKeyCheckBox.Checked = true;
 				return;
 			}
 
-			passwordTextBox.UseSystemPasswordChar = hide;
+			keyTextBox.UseSystemPasswordChar = hide;
 
 			if (!m_bInitializing)
 			{
-				UIUtil.SetFocus(passwordTextBox, this);
+				UIUtil.SetFocus(keyTextBox, this);
 			}
 		}
 	}

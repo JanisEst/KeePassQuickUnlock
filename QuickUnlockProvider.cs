@@ -59,7 +59,7 @@ namespace KeePassQuickUnlock
 		private class QuickUnlockData
 		{
 			public DateTime ValidUntil;
-			public ProtectedString Pin;
+			public ProtectedString UnlockKey;
 			public ProtectedBinary ComposedKey;
 
 			public bool IsValid()
@@ -68,7 +68,7 @@ namespace KeePassQuickUnlock
 			}
 		}
 
-		/// <summary>Maps database paths to cached passwords</summary>
+		/// <summary>Maps database paths to cached keys</summary>
 		private Dictionary<string, QuickUnlockData> unlockCache;
 
 		public override string Name
@@ -108,7 +108,7 @@ namespace KeePassQuickUnlock
 				unlockCache[databasePath] = new QuickUnlockData
 				{
 					ValidUntil = validPeriod == VALID_UNLIMITED ? DateTime.MaxValue : DateTime.Now.AddSeconds(validPeriod),
-					Pin = pin.WithProtection(true),
+					UnlockKey = pin.WithProtection(true),
 					ComposedKey = keys.CombineKeys()
 				};
 			}
@@ -191,8 +191,8 @@ namespace KeePassQuickUnlock
 					return null;
 				}
 
-				var pb = data.Pin.ReadUtf8();
-				var same = MemUtil.ArraysEqual(pb, StrUtil.Utf8.GetBytes(quof.QuickPassword));
+				var pb = data.UnlockKey.ReadUtf8();
+				var same = MemUtil.ArraysEqual(pb, StrUtil.Utf8.GetBytes(quof.QuickUnlockKey));
 				MemUtil.ZeroByteArray(pb);
 
 				if (same == false)

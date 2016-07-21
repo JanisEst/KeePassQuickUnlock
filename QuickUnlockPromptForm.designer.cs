@@ -32,8 +32,8 @@
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.bannerImagePictureBox = new System.Windows.Forms.PictureBox();
 			this.infoLabel = new System.Windows.Forms.Label();
-			this.passwordTextBox = new System.Windows.Forms.TextBox();
-			this.hidePasswordCheckBox = new System.Windows.Forms.CheckBox();
+			this.keyTextBox = new System.Windows.Forms.TextBox();
+			this.hideKeyCheckBox = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.bannerImagePictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -71,28 +71,28 @@
 			this.infoLabel.AutoSize = true;
 			this.infoLabel.Location = new System.Drawing.Point(12, 77);
 			this.infoLabel.Name = "infoLabel";
-			this.infoLabel.Size = new System.Drawing.Size(213, 13);
+			this.infoLabel.Size = new System.Drawing.Size(250, 13);
 			this.infoLabel.TabIndex = 3;
-			this.infoLabel.Text = "Enter the password to unlock the database:";
+			this.infoLabel.Text = "Enter the QuickUnlock key to unlock the database:";
 			// 
-			// passwordTextBox
+			// keyTextBox
 			// 
-			this.passwordTextBox.Location = new System.Drawing.Point(15, 93);
-			this.passwordTextBox.Name = "passwordTextBox";
-			this.passwordTextBox.Size = new System.Drawing.Size(224, 20);
-			this.passwordTextBox.TabIndex = 4;
+			this.keyTextBox.Location = new System.Drawing.Point(15, 93);
+			this.keyTextBox.Name = "keyTextBox";
+			this.keyTextBox.Size = new System.Drawing.Size(224, 20);
+			this.keyTextBox.TabIndex = 4;
 			// 
-			// hidePasswordCheckBox
+			// hideKeyCheckBox
 			// 
-			this.hidePasswordCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
-			this.hidePasswordCheckBox.Location = new System.Drawing.Point(245, 91);
-			this.hidePasswordCheckBox.Name = "hidePasswordCheckBox";
-			this.hidePasswordCheckBox.Size = new System.Drawing.Size(32, 23);
-			this.hidePasswordCheckBox.TabIndex = 5;
-			this.hidePasswordCheckBox.Text = "***";
-			this.hidePasswordCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.hidePasswordCheckBox.UseVisualStyleBackColor = true;
-			this.hidePasswordCheckBox.CheckedChanged += new System.EventHandler(this.OnCheckedHidePassword);
+			this.hideKeyCheckBox.Appearance = System.Windows.Forms.Appearance.Button;
+			this.hideKeyCheckBox.Location = new System.Drawing.Point(245, 91);
+			this.hideKeyCheckBox.Name = "hideKeyCheckBox";
+			this.hideKeyCheckBox.Size = new System.Drawing.Size(32, 23);
+			this.hideKeyCheckBox.TabIndex = 5;
+			this.hideKeyCheckBox.Text = "***";
+			this.hideKeyCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.hideKeyCheckBox.UseVisualStyleBackColor = true;
+			this.hideKeyCheckBox.CheckedChanged += new System.EventHandler(this.OnCheckedHideKey);
 			// 
 			// QuickUnlockPromptForm
 			// 
@@ -101,8 +101,8 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cancelButton;
 			this.ClientSize = new System.Drawing.Size(289, 158);
-			this.Controls.Add(this.hidePasswordCheckBox);
-			this.Controls.Add(this.passwordTextBox);
+			this.Controls.Add(this.hideKeyCheckBox);
+			this.Controls.Add(this.keyTextBox);
 			this.Controls.Add(this.infoLabel);
 			this.Controls.Add(this.bannerImagePictureBox);
 			this.Controls.Add(this.cancelButton);
@@ -128,7 +128,7 @@
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.PictureBox bannerImagePictureBox;
 		private System.Windows.Forms.Label infoLabel;
-		private System.Windows.Forms.TextBox passwordTextBox;
-		private System.Windows.Forms.CheckBox hidePasswordCheckBox;
+		private System.Windows.Forms.TextBox keyTextBox;
+		private System.Windows.Forms.CheckBox hideKeyCheckBox;
 	}
 }
