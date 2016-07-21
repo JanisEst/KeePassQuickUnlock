@@ -101,13 +101,13 @@ namespace KeePassQuickUnlock
 			Contract.Requires(pin != null);
 			Contract.Requires(keys != null);
 
+			var validPeriod = KeePassQuickUnlockExt.Host.CustomConfig.GetULong(CfgValidPeriod, VALID_DEFAULT);
+
 			lock (unlockCache)
 			{
 				unlockCache[databasePath] = new QuickUnlockData
 				{
-					ValidUntil = DateTime.Now.AddSeconds(
-						KeePassQuickUnlockExt.Host.CustomConfig.GetULong(CfgValidPeriod, VALID_DEFAULT)
-					),
+					ValidUntil = validPeriod == VALID_UNLIMITED ? DateTime.MaxValue : DateTime.Now.AddSeconds(validPeriod),
 					Pin = pin.WithProtection(true),
 					ComposedKey = keys.CombineKeys()
 				};

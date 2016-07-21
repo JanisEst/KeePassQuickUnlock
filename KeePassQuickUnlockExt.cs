@@ -51,7 +51,7 @@ namespace KeePassQuickUnlock
 			if (host != null) { Debug.Assert(false); Terminate(); }
 			if (_host == null) { return false; }
 
-			Debugger.Launch();
+			//Debugger.Launch();
 
 			host = _host;
 
