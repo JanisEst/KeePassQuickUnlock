@@ -51,7 +51,7 @@ namespace KeePassQuickUnlock
 			if (host != null) { Debug.Assert(false); Terminate(); }
 			if (_host == null) { return false; }
 
-			//Debugger.Launch();
+			Debugger.Launch();
 
 			host = _host;
 
@@ -87,9 +87,14 @@ namespace KeePassQuickUnlock
 			host = null;
 		}
 
+		/// <summary>
+		/// If the timer elapsed clear the expiered keys.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ElapsedHandler(object sender, STimers.ElapsedEventArgs e)
 		{
-			provider.ClearExpieredEntries();
+			provider.ClearExpieredKeys();
 		}
 
 		/// <summary>
@@ -107,6 +112,7 @@ namespace KeePassQuickUnlock
 				var rootGroup = e.Database.RootGroup;
 				if (rootGroup != null)
 				{
+					// Check if a QuickUnlock entry is available.
 					var entry = rootGroup.Entries.Where(en => en.Strings.GetSafe(PwDefs.TitleField).ReadString() == ShortProductName).FirstOrDefault();
 					if (entry != null)
 					{
@@ -120,8 +126,10 @@ namespace KeePassQuickUnlock
 					}
 				}
 
+				// Check if PartOfPassword is enabled...
 				if (Host.CustomConfig.GetEnum(QuickUnlockProvider.CfgMode, Mode.Entry) == Mode.EntryOrPartOf)
 				{
+					// ...and there is a password available.
 					var passwordKey = e.Database.MasterKey.UserKeys.Where(k => k is KcpPassword).FirstOrDefault() as KcpPassword;
 					if (passwordKey != null)
 					{
@@ -131,12 +139,14 @@ namespace KeePassQuickUnlock
 							var origin = Host.CustomConfig.GetEnum(QuickUnlockProvider.CfgPartOfOrigin, PartOfOrigin.Default);
 
 							var chars = passwordKey.Password.GetChars();
+
+							var startIndex = 0;
 							if (origin == PartOfOrigin.End)
 							{
-								Array.Reverse(chars);
+								startIndex = chars.Length - length;
 							}
 
-							provider.AddCachedKey(e.Database.IOConnectionInfo.Path, chars.ToProtectedString(0, length), e.Database.MasterKey);
+							provider.AddCachedKey(e.Database.IOConnectionInfo.Path, chars.ToProtectedString(startIndex, length), e.Database.MasterKey);
 
 							CharUtils.ZeroCharArray(chars);
 
@@ -145,7 +155,7 @@ namespace KeePassQuickUnlock
 					}
 				}
 
-				// If no pin is set, remove possible cached pin.
+				// If no key is set, remove possible cached key.
 				provider.RemoveCachedKey(e.Database.IOConnectionInfo.Path);
 			}
 		}
@@ -162,11 +172,10 @@ namespace KeePassQuickUnlock
 			{
 				keyPromptForm.Shown += delegate (object sender2, EventArgs e2)
 				{
+					// Warning: If one of the private fields get renamed this method will fail!
 					var m_cmbKeyFile = keyPromptForm.Controls.Find("m_cmbKeyFile", false).FirstOrDefault() as ComboBox;
 					if (m_cmbKeyFile != null)
 					{
-						var isQuickUnlockAvailable = false;
-
 						var fieldInfo = keyPromptForm.GetType().GetField("m_ioInfo", BindingFlags.Instance | BindingFlags.NonPublic);
 						if (fieldInfo != null)
 						{
@@ -180,13 +189,24 @@ namespace KeePassQuickUnlock
 									{
 										m_cmbKeyFile.SelectedIndex = index;
 
-										isQuickUnlockAvailable = true;
+										// If AutoPrompt is enabled click the Ok button.
+										if (Host.CustomConfig.GetBool(QuickUnlockProvider.CfgAutoPrompt, true))
+										{
+											var m_btnOK = keyPromptForm.Controls.Find("m_btnOK", false).FirstOrDefault() as Button;
+											if (m_btnOK != null)
+											{
+												m_btnOK.PerformClick();
+											}
+										}
+
+										return;
 									}
 								}
 							}
 						}
 
-						if (!isQuickUnlockAvailable && m_cmbKeyFile.Text == ShortProductName)
+						// If KeePass autoselected QuickUnlock but there isn't a key available just unselect it.
+						if (m_cmbKeyFile.Text == ShortProductName)
 						{
 							var m_cbKeyFile = keyPromptForm.Controls.Find("m_cbKeyFile", false).FirstOrDefault() as CheckBox;
 							if (m_cbKeyFile != null)
@@ -198,7 +218,6 @@ namespace KeePassQuickUnlock
 				};
 			}
 
-			//add QuickUnlock options tab
 			var optionsForm = e.Form as OptionsForm;
 			if (optionsForm != null)
 			{
@@ -206,6 +225,7 @@ namespace KeePassQuickUnlock
 				{
 					try
 					{
+						// Add the QuickUnlock options tab.
 						var m_tabMain = optionsForm.Controls.Find("m_tabMain", true).FirstOrDefault() as TabControl;
 						if (m_tabMain != null)
 						{

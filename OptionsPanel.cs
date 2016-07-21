@@ -1,6 +1,4 @@
-﻿using KeePass.App;
-using KeePass.UI;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +7,7 @@ namespace KeePassQuickUnlock
 {
 	public partial class OptionsPanel : UserControl
 	{
+		/// <summary>Intialize with the config.</summary>
 		public OptionsPanel(KeePassQuickUnlockExt plugin)
 		{
 			InitializeComponent();
@@ -24,6 +23,8 @@ namespace KeePassQuickUnlock
 				case Mode.Entry: modeEntryRadioButton.Checked = true; break;
 				case Mode.EntryOrPartOf: modeEntryPartOfRadioButton.Checked = true; break;
 			}
+
+			autoPromptCheckBox.Checked = config.GetBool(QuickUnlockProvider.CfgAutoPrompt, true);
 
 			validPeriodComboBox.SelectedIndex = PeriodToIndex(
 				config.GetULong(
@@ -42,6 +43,9 @@ namespace KeePassQuickUnlock
 			lengthNumericUpDown.Value = config.GetULong(QuickUnlockProvider.CfgPartOfLength, QuickUnlockProvider.MinimumPartOfLength);
 		}
 
+		/// <summary>Converts the combobox index to a valid period.</summary>
+		/// <param name="index">Index of the combobox.</param>
+		/// <returns>The valid periods in seconds.</returns>
 		private ulong IndexToPeriod(int index)
 		{
 			switch (index)
@@ -61,6 +65,9 @@ namespace KeePassQuickUnlock
 			}
 		}
 
+		/// <summary>Converts the valid period to the combobox item index.</summary>
+		/// <param name="period">The valid period in secons.</param>
+		/// <returns>The index of the combobox item.</returns>
 		private int PeriodToIndex(ulong period)
 		{
 			switch (period)
@@ -80,12 +87,14 @@ namespace KeePassQuickUnlock
 			}
 		}
 
+		/// <summary>Register for the FormClosing event.</summary>
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
 			if (ParentForm != null)
 			{
+				// Save the settings on FormClosing.
 				ParentForm.FormClosing += delegate (object sender2, FormClosingEventArgs e2)
 				{
 					if (ParentForm.DialogResult == DialogResult.OK)
@@ -95,6 +104,10 @@ namespace KeePassQuickUnlock
 						config.SetEnum(
 							QuickUnlockProvider.CfgMode,
 							modeEntryRadioButton.Checked ? Mode.Entry : Mode.EntryOrPartOf
+						);
+						config.SetBool(
+							QuickUnlockProvider.CfgAutoPrompt,
+							autoPromptCheckBox.Checked
 						);
 						config.SetULong(
 							QuickUnlockProvider.CfgValidPeriod,
@@ -113,6 +126,7 @@ namespace KeePassQuickUnlock
 			}
 		}
 
+		/// <summary>Opens the readme.</summary>
 		private void helpButton_Click(object sender, EventArgs e)
 		{
 			Process.Start("https://github.com/KN4CK3R/KeePassQuickUnlock/blob/master/README.md");

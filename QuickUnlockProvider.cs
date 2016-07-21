@@ -145,8 +145,8 @@ namespace KeePassQuickUnlock
 			return TryGetCachedKey(databasePath, out temp);
 		}
 
-		/// <summary>Clears the expiered entries.</summary>
-		public void ClearExpieredEntries()
+		/// <summary>Clears the expiered keys.</summary>
+		public void ClearExpieredKeys()
 		{
 			lock (unlockCache)
 			{
