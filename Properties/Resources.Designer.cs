@@ -63,6 +63,16 @@ namespace KeePassQuickUnlock.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap B16x16_Help {
+            get {
+                object obj = ResourceManager.GetObject("B16x16_Help", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap B16x16_TimeLock {
             get {
                 object obj = ResourceManager.GetObject("B16x16_TimeLock", resourceCulture);

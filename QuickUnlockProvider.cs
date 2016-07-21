@@ -9,10 +9,39 @@ using System.Linq;
 
 namespace KeePassQuickUnlock
 {
+	/// <summary>Values that represent QuickUnlock modes.</summary>
+	enum Mode
+	{
+		Entry,
+		EntryOrPartOf,
+
+		Default = Entry
+	}
+
+	/// <summary>Values that represent PartOf origins.</summary>
+	enum PartOfOrigin
+	{
+		Front,
+		End,
+
+		Default = Front
+	}
+
 	public class QuickUnlockProvider : KeyProvider
 	{
-		/// <summary>PIN settings name</summary>
+		/// <summary>Mode setting name</summary>
+		public const string CfgMode = KeePassQuickUnlockExt.ShortProductName + "_Mode";
+		/// <summary>Auto Prompt setting name</summary>
+		public const string CfgAutoPrompt = KeePassQuickUnlockExt.ShortProductName + "_AutoPrompt";
+		/// <summary>PIN setting name</summary>
 		public const string CfgValidPeriod = KeePassQuickUnlockExt.ShortProductName + "_ValidPeriod";
+		/// <summary>PartOf Origin setting name</summary>
+		public const string CfgPartOfOrigin = KeePassQuickUnlockExt.ShortProductName + "_PartOfOrigin";
+		/// <summary>PartOf Length setting name</summary>
+		public const string CfgPartOfLength = KeePassQuickUnlockExt.ShortProductName + "_PartOfLength";
+		/// <summary>The minimum PartOf length.</summary>
+		public const int MinimumPartOfLength = 2;
+
 		/// <summary>The valid periods in seconds.</summary>
 		public const ulong VALID_UNLIMITED = 0;
 		public const ulong VALID_1MINUTE = 60;

@@ -34,10 +34,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KeePass, Version=2.34.0.28121, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\KeePass.exe</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -46,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CharUtils.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="KeePassQuickUnlockExt.cs" />
     <Compile Include="OptionsPanel.cs">
@@ -88,6 +85,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\B48x48_TimeLock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KeePass-2.34-Source\KeePass\KeePass.csproj">
+      <Project>{10938016-dee2-4a25-9a5a-8fd3444379ca}</Project>
+      <Name>KeePass</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\B16x16_Help.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,6 +1,7 @@
 ﻿using KeePass.App;
 using KeePass.UI;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -15,12 +16,30 @@ namespace KeePassQuickUnlock
 			SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			BackColor = Color.Transparent;
 
+			var config = KeePassQuickUnlockExt.Host.CustomConfig;
+
+			switch (config.GetEnum(QuickUnlockProvider.CfgMode, Mode.Default))
+			{
+				default:
+				case Mode.Entry: modeEntryRadioButton.Checked = true; break;
+				case Mode.EntryOrPartOf: modeEntryPartOfRadioButton.Checked = true; break;
+			}
+
 			validPeriodComboBox.SelectedIndex = PeriodToIndex(
-				KeePassQuickUnlockExt.Host.CustomConfig.GetULong(
+				config.GetULong(
 					QuickUnlockProvider.CfgValidPeriod,
 					QuickUnlockProvider.VALID_DEFAULT
 				)
 			);
+
+			switch (config.GetEnum(QuickUnlockProvider.CfgPartOfOrigin, PartOfOrigin.Default))
+			{
+				default:
+				case PartOfOrigin.Front: originFrontRadioButton.Checked = true; break;
+				case PartOfOrigin.End: originEndRadioButton.Checked = true; break;
+			}
+
+			lengthNumericUpDown.Value = config.GetULong(QuickUnlockProvider.CfgPartOfLength, QuickUnlockProvider.MinimumPartOfLength);
 		}
 
 		private ulong IndexToPeriod(int index)
@@ -71,13 +90,32 @@ namespace KeePassQuickUnlock
 				{
 					if (ParentForm.DialogResult == DialogResult.OK)
 					{
-						KeePassQuickUnlockExt.Host.CustomConfig.SetULong(
+						var config = KeePassQuickUnlockExt.Host.CustomConfig;
+						
+						config.SetEnum(
+							QuickUnlockProvider.CfgMode,
+							modeEntryRadioButton.Checked ? Mode.Entry : Mode.EntryOrPartOf
+						);
+						config.SetULong(
 							QuickUnlockProvider.CfgValidPeriod,
 							IndexToPeriod(validPeriodComboBox.SelectedIndex)
+						);
+						config.SetEnum(
+							QuickUnlockProvider.CfgPartOfOrigin,
+							originFrontRadioButton.Checked ? PartOfOrigin.Front : PartOfOrigin.End
+						);
+						config.SetULong(
+							QuickUnlockProvider.CfgPartOfLength,
+							(ulong)lengthNumericUpDown.Value
 						);
 					}
 				};
 			}
+		}
+
+		private void helpButton_Click(object sender, EventArgs e)
+		{
+			Process.Start("https://github.com/KN4CK3R/KeePassQuickUnlock/blob/master/README.md");
 		}
 	}
 }

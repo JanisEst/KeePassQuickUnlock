@@ -1,8 +1,10 @@
-﻿using KeePassLib.Keys;
+﻿using KeePass.App.Configuration;
+using KeePassLib.Keys;
 using KeePassLib.Security;
 using KeePassLib.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace KeePassQuickUnlock
 {
@@ -35,6 +37,50 @@ namespace KeePassQuickUnlock
 			var pb = new ProtectedBinary(true, allData);
 			MemUtil.ZeroByteArray(allData);
 			return pb;
+		}
+
+		public static char[] GetChars(this ProtectedString ps)
+		{
+			var pb = ps.ReadUtf8();
+
+			var chars = StrUtil.Utf8.GetChars(pb);
+
+			MemUtil.ZeroByteArray(pb);
+
+			return chars;
+		}
+
+		public static ProtectedString ToProtectedString(this char[] chars)
+		{
+			return chars.ToProtectedString(0, chars.Length);
+		}
+
+		public static ProtectedString ToProtectedString(this char[] chars, int charIndex, int charCount)
+		{
+			var pb = StrUtil.Utf8.GetBytes(chars, charIndex, charCount);
+			var ps = new ProtectedString(true, pb);
+			MemUtil.ZeroByteArray(pb);
+			return ps;
+		}
+
+		public static void SetEnum<T>(this AceCustomConfig config, string strID, T eValue) where T : struct, IConvertible
+		{
+			Contract.Requires(typeof(T).IsEnum);
+
+			config.SetLong(strID, (int)(object)eValue);
+		}
+
+		public static T GetEnum<T>(this AceCustomConfig config, string strID, T eDefault) where T : struct, IConvertible
+		{
+			Contract.Requires(typeof(T).IsEnum);
+
+			var value = config.GetLong(strID, -1);
+			if (value == -1)
+			{
+				return eDefault;
+			}
+
+			return (T)(object)(int)value;
 		}
 	}
 }

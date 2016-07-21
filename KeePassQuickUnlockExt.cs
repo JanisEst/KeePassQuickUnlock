@@ -3,7 +3,10 @@ using KeePass.Plugins;
 using KeePass.UI;
 using KeePassLib;
 using KeePassLib.Collections;
+using KeePassLib.Keys;
+using KeePassLib.Security;
 using KeePassLib.Serialization;
+using KeePassLib.Utility;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -38,12 +41,17 @@ namespace KeePassQuickUnlock
 			get { return "https://github.com/KN4CK3R/KeePassQuickUnlock/raw/master/keepass.version"; }
 		}
 
+		public static QuickUnlockProvider Provider
+		{
+			get { return provider; }
+		}
+
 		public override bool Initialize(IPluginHost _host)
 		{
 			if (host != null) { Debug.Assert(false); Terminate(); }
 			if (_host == null) { return false; }
 
-			//Debugger.Launch();
+			Debugger.Launch();
 
 			host = _host;
 
@@ -106,6 +114,32 @@ namespace KeePassQuickUnlock
 						if (password.IsEmpty == false)
 						{
 							provider.AddCachedKey(e.Database.IOConnectionInfo.Path, password, e.Database.MasterKey);
+
+							return;
+						}
+					}
+				}
+
+				if (Host.CustomConfig.GetEnum(QuickUnlockProvider.CfgMode, Mode.Entry) == Mode.EntryOrPartOf)
+				{
+					var passwordKey = e.Database.MasterKey.UserKeys.Where(k => k is KcpPassword).FirstOrDefault() as KcpPassword;
+					if (passwordKey != null)
+					{
+						var length = (int)Host.CustomConfig.GetLong(QuickUnlockProvider.CfgPartOfLength, QuickUnlockProvider.MinimumPartOfLength);
+						if (passwordKey.Password.Length >= length)
+						{
+							var origin = Host.CustomConfig.GetEnum(QuickUnlockProvider.CfgPartOfOrigin, PartOfOrigin.Default);
+
+							var chars = passwordKey.Password.GetChars();
+							if (origin == PartOfOrigin.End)
+							{
+								Array.Reverse(chars);
+							}
+
+							provider.AddCachedKey(e.Database.IOConnectionInfo.Path, chars.ToProtectedString(0, length), e.Database.MasterKey);
+
+							CharUtils.ZeroCharArray(chars);
+
 							return;
 						}
 					}
