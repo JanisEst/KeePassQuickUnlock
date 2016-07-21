@@ -21,8 +21,8 @@ HOW TO USE
 -----
 The QuickUnlock plugin has two different modes: The default mode uses a custom entry in your database while the other mode uses a part of your master password to quickly unlock the database.
 
-> Because of the way how KeePass works the PartOf mode works only one time before you need to provide your full password again. Because of this limitation a custom entry in the database is the preferred way to use the plugin.
-> If you want to know why there is this limitation, you can read [my comment here](https://github.com/KN4CK3R/KeePassQuickUnlock/issues/7#issuecomment-232715543).
+> Because of the way how KeePass works the PartOf mode works only one time before you need to provide your full password again. Because of this limitation a custom entry in the database is the preferred way to use the plugin.  
+> If you want to know why there is this limitation, you can read [my comment here](https://github.com/KN4CK3R/KeePassQuickUnlock/issues/7#issuecomment-232715543).  
 > To enable the PartOf mode see the options part of this readme.
 
 **Custom Entry Mode**
@@ -63,6 +63,6 @@ QuickUnlock integrates itself into the KeePass settings dialog.
 - Length (default: 2): Choose the length of the key.
 
 Example:
-> Master Password: password
-> Settings: Front + 4 Length
+> Master Password: password  
+> Settings: Front + 4 Length  
 > QuickUnlock key: **pass**word
