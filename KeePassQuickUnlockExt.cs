@@ -113,7 +113,7 @@ namespace KeePassQuickUnlock
 				if (rootGroup != null)
 				{
 					// Check if a QuickUnlock entry is available.
-					var entry = rootGroup.Entries.Where(en => en.Strings.GetSafe(PwDefs.TitleField).ReadString() == ShortProductName).FirstOrDefault();
+					var entry = rootGroup.GetEntries(true).Where(en => en.Strings.GetSafe(PwDefs.TitleField).ReadString() == ShortProductName).FirstOrDefault();
 					if (entry != null)
 					{
 						var password = entry.Strings.GetSafe(PwDefs.PasswordField);

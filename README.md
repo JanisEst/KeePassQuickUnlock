@@ -27,7 +27,7 @@ The QuickUnlock plugin has two different modes: The default mode uses a custom e
 
 **Custom Entry Mode**
 
-- To enable QuickUnlock for a database you need to create a special entry in the root group of the database. The title of this entry must be "QuickUnlock". The password you set in this entry will be the key you need to provide while unlocking the database. Only the title and the password field are mandatory, all other fields are ignored. QuickUnlock will not be available for the database if no entry with the title "QuickUnlock" is found in the root group or the password field is empty.
+- To enable QuickUnlock for a database you need to create a special entry in a group of the database. The title of this entry must be "QuickUnlock". The password you set in this entry will be the key you need to provide while unlocking the database. Only the title and the password field are mandatory, all other fields are ignored. QuickUnlock will not be available for the database if no entry with the title "QuickUnlock" is found or the password field is empty.
 
 ![alt tag](https://abload.de/img/quickunlock11msja.jpg)
 
@@ -42,7 +42,7 @@ The QuickUnlock plugin has two different modes: The default mode uses a custom e
 
 ![alt tag](https://abload.de/img/quickunlock_keypromptdmsro.jpg)
 
-- To disable QuickUnlock for a database just remove the QuickUnlock entry from the root group (or don't create it). If you have enabled the PartOf mode you will need to disable this mode in order to disable QuickUnlock.
+- To disable QuickUnlock for a database just remove the QuickUnlock entry (or don't create it). If you have enabled the PartOf mode you will need to disable this mode in order to disable QuickUnlock.
 
 OPTIONS
 -----
@@ -51,7 +51,7 @@ QuickUnlock integrates itself into the KeePass settings dialog.
 ![alt tag](https://abload.de/img/quickunlock_optionsqgahv.jpg)
 
 **QuickUnlock Mode**
-- 'QuickUnlock' Entry only (default): Enable QuickUnlock only if the custom entry is available in the root group of the database.
+- 'QuickUnlock' Entry only (default): Enable QuickUnlock only if the custom entry is available in a group of the database.
 - 'QuickUnlock' Entry / Part of Master Password: Enable QuickUnlock if a custom entry is available or the master password satisfies the needed requirements.
 
 **QuickUnlock Settings**
