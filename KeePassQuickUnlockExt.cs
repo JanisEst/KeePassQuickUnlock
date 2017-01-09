@@ -189,6 +189,12 @@ namespace KeePassQuickUnlock
 									{
 										m_cmbKeyFile.SelectedIndex = index;
 
+										var m_cbPassword = keyPromptForm.Controls.Find("m_cbPassword", false).FirstOrDefault() as CheckBox;
+										if (m_cbPassword != null)
+										{
+											m_cbPassword.Checked = false;
+										}
+
 										// If AutoPrompt is enabled click the Ok button.
 										if (Host.CustomConfig.GetBool(QuickUnlockProvider.CfgAutoPrompt, true))
 										{
