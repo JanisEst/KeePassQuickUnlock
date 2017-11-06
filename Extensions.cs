@@ -1,10 +1,11 @@
-﻿using KeePass.App.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using KeePass.App.Configuration;
+using KeePassLib.Cryptography.Cipher;
 using KeePassLib.Keys;
 using KeePassLib.Security;
 using KeePassLib.Utility;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace KeePassQuickUnlock
 {
@@ -41,6 +42,44 @@ namespace KeePassQuickUnlock
 			var pb = new ProtectedBinary(true, allData);
 			MemUtil.ZeroByteArray(allData);
 			return pb;
+		}
+
+		/// <summary>
+		/// Encrypts the contained data with the specific <see cref="CtrBlockCipher"/>.
+		/// </summary>
+		/// <param name="pb">The data to encrypt.</param>
+		/// <param name="cipher">The cipher to use.</param>
+		/// <returns>A new <see cref="ProtectedBinary"/> which contains the encrypted data.</returns>
+		public static ProtectedBinary Encrypt(this ProtectedBinary pb, CtrBlockCipher cipher)
+		{
+			var data = pb.ReadData();
+
+			cipher.Encrypt(data, 0, data.Length);
+
+			var result = new ProtectedBinary(true, data);
+
+			MemUtil.ZeroByteArray(data);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Decrypts the contained data with the specific <see cref="CtrBlockCipher"/>.
+		/// </summary>
+		/// <param name="pb">The data to decrypt.</param>
+		/// <param name="cipher">The cipher to use.</param>
+		/// <returns>A new <see cref="ProtectedBinary"/> which contains the decrypted data.</returns>
+		public static ProtectedBinary Decrypt(this ProtectedBinary pb, CtrBlockCipher cipher)
+		{
+			var data = pb.ReadData();
+
+			cipher.Decrypt(data, 0, data.Length);
+
+			var result = new ProtectedBinary(true, data);
+
+			MemUtil.ZeroByteArray(data);
+
+			return result;
 		}
 
 		/// <summary>A ProtectedString extension method that gets the characters.</summary>

@@ -6,6 +6,10 @@ using System.Windows.Forms;
 using System.Diagnostics.Contracts;
 using KeePassLib.Security;
 using System.Linq;
+using System.Security.Cryptography;
+using KeePassLib;
+using KeePassLib.Cryptography;
+using KeePassLib.Cryptography.Cipher;
 
 namespace KeePassQuickUnlock
 {
@@ -59,7 +63,7 @@ namespace KeePassQuickUnlock
 		private class QuickUnlockData
 		{
 			public DateTime ValidUntil;
-			public ProtectedString UnlockKey;
+			public byte[] Nonce;
 			public ProtectedBinary ComposedKey;
 
 			public bool IsValid()
@@ -69,7 +73,7 @@ namespace KeePassQuickUnlock
 		}
 
 		/// <summary>Maps database paths to cached keys</summary>
-		private Dictionary<string, QuickUnlockData> unlockCache;
+		private readonly Dictionary<string, QuickUnlockData> unlockCache;
 
 		public override string Name
 		{
@@ -91,6 +95,65 @@ namespace KeePassQuickUnlock
 			unlockCache = new Dictionary<string, QuickUnlockData>();
 		}
 
+		/// <summary>
+		/// Creates a cipher instance with a random nonce and the pin as key.
+		/// </summary>
+		/// <param name="pin">The pin to use as key.</param>
+		/// <returns>The cipher instance and the nonce.</returns>
+		private static Tuple<CtrBlockCipher, byte[]> CreateCipher(ProtectedString pin)
+		{
+			Contract.Requires(pin != null);
+			Contract.Ensures(Contract.Result<Tuple<ChaCha20Cipher, byte[]>>() != null);
+
+			var nonceLength = PwDefs.FileVersion64 >= 0x0002002300000000UL /*2.35*/ ? 12u : 8u;
+			var nonce = CryptoRandom.Instance.GetRandomBytes(nonceLength);
+
+			var pinBytes = pin.ReadUtf8();
+
+			var result = Tuple.Create(CreateCipher(pinBytes, nonce), nonce);
+
+			MemUtil.ZeroByteArray(pinBytes);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Creates a cipher instance (<see cref="ChaCha20Cipher"/> or <see cref="Salsa20Cipher"/> (KeePass older as 2.35)) with the nonce and the pin as key.
+		/// </summary>
+		/// <param name="pin">The pin to use as key.</param>
+		/// <param name="nonce">The nonce to use as IV.</param>
+		/// <returns>The cipher instance.</returns>
+		private static CtrBlockCipher CreateCipher(byte[] pin, byte[] nonce)
+		{
+			Contract.Requires(pin != null);
+			Contract.Requires(nonce != null);
+			Contract.Ensures(Contract.Result<ChaCha20Cipher>() != null);
+
+			var key = new byte[32];
+			using (var h = new SHA512Managed())
+			{
+				var hashBytes = h.ComputeHash(pin);
+				Array.Copy(hashBytes, key, 32);
+
+				MemUtil.ZeroByteArray(hashBytes);
+			}
+
+			CtrBlockCipher cipher;
+
+			if (nonce.Length == 12 /*>= KeePass 2.35*/)
+			{
+				cipher = new ChaCha20Cipher(key, nonce, false);
+			}
+			else
+			{
+				cipher = new Salsa20Cipher(key, nonce);
+			}
+
+			MemUtil.ZeroByteArray(key);
+
+			return cipher;
+		}
+
 		/// <summary>Adds a database-key mapping.</summary>
 		/// <param name="databasePath">Full path of the database file.</param>
 		/// <param name="pin">The pin to unlock the database.</param>
@@ -105,12 +168,16 @@ namespace KeePassQuickUnlock
 
 			lock (unlockCache)
 			{
+				var cn = CreateCipher(pin);
+
 				unlockCache[databasePath] = new QuickUnlockData
 				{
 					ValidUntil = validPeriod == VALID_UNLIMITED ? DateTime.MaxValue : DateTime.Now.AddSeconds(validPeriod),
-					UnlockKey = pin.WithProtection(true),
-					ComposedKey = keys.CombineKeys()
+					Nonce = cn.Item2,
+					ComposedKey = keys.CombineKeys().Encrypt(cn.Item1)
 				};
+
+				cn.Item1.Dispose();
 			}
 		}
 
@@ -184,27 +251,25 @@ namespace KeePassQuickUnlock
 				return null;
 			}
 
-			using (QuickUnlockPromptForm quof = new QuickUnlockPromptForm())
+			using (var quof = new QuickUnlockPromptForm(ctx.IsOnSecureDesktop))
 			{
 				if (quof.ShowDialog() != DialogResult.OK)
 				{
 					return null;
 				}
 
-				var pb = data.UnlockKey.ReadUtf8();
-				var same = MemUtil.ArraysEqual(pb, StrUtil.Utf8.GetBytes(quof.QuickUnlockKey));
-				MemUtil.ZeroByteArray(pb);
+				ProtectedBinary result;
 
-				if (same == false)
+				var pinBytes = quof.QuickUnlockKey;
+				using (var cipher = CreateCipher(pinBytes, data.Nonce))
 				{
-					//remove the cache entry
 					RemoveCachedKey(ctx.DatabasePath);
 
-					//return dummy password to let KeePass fail while loading the database
-					return new byte[] { 0 };
+					result = data.ComposedKey.Decrypt(cipher);
 				}
+				MemUtil.ZeroByteArray(pinBytes);
 
-				return data.ComposedKey.ReadData();
+				return result.ReadData();
 			}
 		}
 	}

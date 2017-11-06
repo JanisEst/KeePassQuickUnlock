@@ -1,41 +1,43 @@
 ﻿using System;
 using System.Windows.Forms;
-
-using KeePass.UI;
 using KeePass.App;
+using KeePass.UI;
 
 namespace KeePassQuickUnlock
 {
 	public partial class QuickUnlockPromptForm : Form
 	{
-		private bool m_bInitializing = true;
+		private readonly bool initializing;
 
-		public string QuickUnlockKey
+		private readonly SecureEdit secureEdit = new SecureEdit();
+
+		public byte[] QuickUnlockKey
 		{
-			get { return keyTextBox.Text; }
+			get { return secureEdit.ToUtf8(); }
 		}
 
-		public QuickUnlockPromptForm()
+		public QuickUnlockPromptForm(bool isOnSecureDesktop)
 		{
 			InitializeComponent();
 
-			m_bInitializing = true;
+			initializing = true;
 
 			GlobalWindowManager.AddWindow(this);
 
-			string strTitle = KeePassQuickUnlockExt.ShortProductName;
-			string strDesc = "Unlock using QuickUnlock.";
-
-			Text = strTitle;
-			BannerFactory.CreateBannerEx(this, bannerImagePictureBox, Properties.Resources.B48x48_TimeLock, strTitle, strDesc);
+			Text = KeePassQuickUnlockExt.ShortProductName;
+			BannerFactory.CreateBannerEx(this, bannerImagePictureBox, Properties.Resources.B48x48_TimeLock, KeePassQuickUnlockExt.ShortProductName, "Unlock using QuickUnlock.");
 
 			hideKeyCheckBox.Checked = true;
 
 			keyTextBox.Text = string.Empty;
 
+			secureEdit.SecureDesktopMode = isOnSecureDesktop;
+			secureEdit.Attach(keyTextBox, null, true);
+
+			hideKeyCheckBox.Checked = true;
 			OnCheckedHideKey(null, null);
 
-			m_bInitializing = false;
+			initializing = false;
 		}
 
 		private void OnFormShown(object sender, EventArgs e)
@@ -50,16 +52,16 @@ namespace KeePassQuickUnlock
 
 		private void OnCheckedHideKey(object sender, EventArgs e)
 		{
-			bool hide = hideKeyCheckBox.Checked;
+			var hide = hideKeyCheckBox.Checked;
 			if (!hide && !AppPolicy.Try(AppPolicyId.UnhidePasswords))
 			{
 				hideKeyCheckBox.Checked = true;
 				return;
 			}
 
-			keyTextBox.UseSystemPasswordChar = hide;
+			secureEdit.EnableProtection(hide);
 
-			if (!m_bInitializing)
+			if (!initializing)
 			{
 				UIUtil.SetFocus(keyTextBox, this);
 			}
