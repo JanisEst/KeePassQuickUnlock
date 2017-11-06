@@ -1,18 +1,15 @@
-﻿using KeePass.Forms;
-using KeePass.Plugins;
-using KeePass.UI;
-using KeePassLib;
-using KeePassLib.Collections;
-using KeePassLib.Keys;
-using KeePassLib.Security;
-using KeePassLib.Serialization;
-using KeePassLib.Utility;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using KeePass.Forms;
+using KeePass.Plugins;
+using KeePass.UI;
+using KeePassLib;
+using KeePassLib.Keys;
+using KeePassLib.Serialization;
 using STimers = System.Timers;
 
 namespace KeePassQuickUnlock
@@ -192,7 +189,7 @@ namespace KeePassQuickUnlock
 										var m_cbPassword = keyPromptForm.Controls.Find("m_cbPassword", false).FirstOrDefault() as CheckBox;
 										if (m_cbPassword != null)
 										{
-											m_cbPassword.Checked = false;
+											UIUtil.SetChecked(m_cbPassword, false);
 										}
 
 										// If AutoPrompt is enabled click the Ok button.
