@@ -87,7 +87,7 @@
     <None Include="Resources\B48x48_TimeLock.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KeePass-2.35-Source\KeePass\KeePass.csproj">
+    <ProjectReference Include="..\KeePass-Source\KeePass\KeePass.csproj">
       <Project>{10938016-dee2-4a25-9a5a-8fd3444379ca}</Project>
       <Name>KeePass</Name>
     </ProjectReference>
