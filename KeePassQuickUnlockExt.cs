@@ -35,7 +35,7 @@ namespace KeePassQuickUnlock
 
 		public override string UpdateUrl
 		{
-			get { return "https://github.com/KN4CK3R/KeePassQuickUnlock/raw/master/keepass.version"; }
+			get { return "https://github.com/JanisEst/KeePassQuickUnlock/raw/master/keepass.version"; }
 		}
 
 		public static QuickUnlockProvider Provider
