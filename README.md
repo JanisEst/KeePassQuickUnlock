@@ -9,11 +9,14 @@ If the wrong QuickUnlock key is entered, the database keeps locked and the full 
 QuickUnlock works with combined keys like password + key file, ... (but was not tested with custom plugins like OtpKeyProv).
 
 This plugin doesn't change the way how KeePass encrypts your database so your data is still safe.
-For more informations why this plugin doesn't break safety, read http://keepass.info/help/base/security.html#secspecattacks
+For more informations why this plugin doesn't break safety, read http://keepass.info/help/base/security.html#secspecattacks and/or [my comment here](https://github.com/JanisEst/KeePassQuickUnlock/issues/26#issuecomment-364114921).
+
+> A note for key file users: Because of the way how KeePass works you are forced to re-provide the path to your key file anytime the QuickUnlock plugin forgets the saved credentials.
+> If you want to know why there is this limitation, you can read [my comment here](https://github.com/JanisEst/KeePassQuickUnlock/issues/7#issuecomment-232715543).  
 
 INSTALLATION
 -----
-- Download from https://github.com/KN4CK3R/KeePassQuickUnlock/releases
+- Download from [the release page](https://github.com/JanisEst/KeePassQuickUnlock/releases)
 - Copy the plug-in (KeePassQuickUnlock.plgx) into the KeePass program directory
 - Start KeePass (and open a database)
 
@@ -22,7 +25,7 @@ HOW TO USE
 The QuickUnlock plugin has two different modes: The default mode uses a custom entry in your database while the other mode uses a part of your master password to quickly unlock the database.
 
 > Because of the way how KeePass works the PartOf mode works only one time before you need to provide your full password again. Because of this limitation a custom entry in the database is the preferred way to use the plugin.  
-> If you want to know why there is this limitation, you can read [my comment here](https://github.com/KN4CK3R/KeePassQuickUnlock/issues/7#issuecomment-232715543).  
+> If you want to know why there is this limitation, you can read [my comment here](https://github.com/JanisEst/KeePassQuickUnlock/issues/7#issuecomment-232715543).  
 > To enable the PartOf mode see the options part of this readme.
 
 **Custom Entry Mode**
