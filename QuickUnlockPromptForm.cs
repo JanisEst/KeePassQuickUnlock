@@ -30,8 +30,6 @@ namespace KeePassQuickUnlock
 			Text = KeePassQuickUnlockExt.ShortProductName;
 			BannerFactory.CreateBannerEx(this, bannerImagePictureBox, Properties.Resources.B48x48_TimeLock, KeePassQuickUnlockExt.ShortProductName, "Unlock using QuickUnlock.");
 
-			hideKeyCheckBox.Checked = true;
-
 			// TODO: Replace with native code for 2.40
 			// If KeePass < 2.39
 			var secureTextBoxExType = Type.GetType("KeePass.UI.SecureTextBoxEx, KeePass");
