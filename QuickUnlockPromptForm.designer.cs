@@ -32,7 +32,7 @@
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.bannerImagePictureBox = new System.Windows.Forms.PictureBox();
 			this.infoLabel = new System.Windows.Forms.Label();
-			this.keyTextBox = new System.Windows.Forms.TextBox();
+			this.keyTextBox = new KeePass.UI.SecureTextBoxEx();
 			this.hideKeyCheckBox = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.bannerImagePictureBox)).BeginInit();
 			this.SuspendLayout();
@@ -128,7 +128,7 @@
 		private System.Windows.Forms.Button cancelButton;
 		private System.Windows.Forms.PictureBox bannerImagePictureBox;
 		private System.Windows.Forms.Label infoLabel;
-		private System.Windows.Forms.TextBox keyTextBox;
+		private KeePass.UI.SecureTextBoxEx keyTextBox;
 		private System.Windows.Forms.CheckBox hideKeyCheckBox;
 	}
 }
